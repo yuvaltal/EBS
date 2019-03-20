@@ -1,0 +1,248 @@
+CREATE OR REPLACE TRIGGER XXOKC_K_LINES_B_AIU_TRG
+--------------------------------------------------------------------------------------------------
+--  name:              XXOKC_K_LINES_B_AIU_TRG
+--  create by:         Lingaraj Sarangi
+--  Revision:          1.0
+--  creation date:     10-May-2018
+--------------------------------------------------------------------------------------------------
+--  purpose :          CHG0042873 - Service Contract interface - Oracle 2 SFDC
+--                                   trigger on OKC_K_LINES_B
+--
+--  Modification History
+--------------------------------------------------------------------------------------------------
+--  ver   date          Name                       Desc
+--  1.0   10-May-2018   Lingaraj Sarangi           CHG0042873 - Service Contract interface - Oracle 2 SFDC
+--------------------------------------------------------------------------------------------------
+AFTER INSERT OR UPDATE  ON "OKC"."OKC_K_LINES_B"
+FOR EACH ROW
+
+when(NEW.STS_CODE  NOT IN ('ENTERED' ,'HOLD') AND NEW.LSE_ID in (9,18) )
+DECLARE
+  l_trigger_name    VARCHAR2(50)   := 'XXOKC_K_LINES_B_AIU_TRG';
+  l_error_message   VARCHAR2(500)  := '';
+  l_old_okc_line_rec   okc.okc_k_lines_b%ROWTYPE;
+  l_new_okc_line_rec   okc.okc_k_lines_b%ROWTYPE;
+  l_trigger_action  VARCHAR2(10) := '';
+BEGIN
+
+  IF INSERTING THEN
+     l_trigger_action := 'INSERT';
+  ELSIF UPDATING THEN
+     l_trigger_action := 'UPDATE';
+  END IF;
+
+  -----------------------------------------------------------
+  -- Old Column Values Before Update
+  -----------------------------------------------------------
+  IF UPDATING THEN
+
+    l_old_okc_line_rec.ID                          := :OLD.ID;
+    l_old_okc_line_rec.LINE_NUMBER                 := :OLD.LINE_NUMBER;
+    l_old_okc_line_rec.CHR_ID                      := :OLD.CHR_ID;
+    l_old_okc_line_rec.CLE_ID                      := :OLD.CLE_ID;
+    l_old_okc_line_rec.CLE_ID_RENEWED              := :OLD.CLE_ID_RENEWED;
+    l_old_okc_line_rec.DNZ_CHR_ID                  := :OLD.DNZ_CHR_ID;
+    l_old_okc_line_rec.DISPLAY_SEQUENCE            := :OLD.DISPLAY_SEQUENCE;
+    l_old_okc_line_rec.STS_CODE                    := :OLD.STS_CODE;
+    l_old_okc_line_rec.TRN_CODE                    := :OLD.TRN_CODE;
+    l_old_okc_line_rec.LSE_ID                      := :OLD.LSE_ID;
+    l_old_okc_line_rec.EXCEPTION_YN                := :OLD.EXCEPTION_YN;
+    l_old_okc_line_rec.OBJECT_VERSION_NUMBER       := :OLD.OBJECT_VERSION_NUMBER;
+    l_old_okc_line_rec.CREATED_BY                  := :OLD.CREATED_BY;
+    l_old_okc_line_rec.CREATION_DATE               := :OLD.CREATION_DATE;
+    l_old_okc_line_rec.LAST_UPDATED_BY             := :OLD.LAST_UPDATED_BY;
+    l_old_okc_line_rec.LAST_UPDATE_DATE            := :OLD.LAST_UPDATE_DATE;
+    l_old_okc_line_rec.HIDDEN_IND                  := :OLD.HIDDEN_IND;
+    l_old_okc_line_rec.PRICE_NEGOTIATED            := :OLD.PRICE_NEGOTIATED;
+    l_old_okc_line_rec.PRICE_LEVEL_IND             := :OLD.PRICE_LEVEL_IND;
+    l_old_okc_line_rec.PRICE_UNIT                  := :OLD.PRICE_UNIT;
+    l_old_okc_line_rec.PRICE_UNIT_PERCENT          := :OLD.PRICE_UNIT_PERCENT;
+    l_old_okc_line_rec.INVOICE_LINE_LEVEL_IND      := :OLD.INVOICE_LINE_LEVEL_IND;
+    l_old_okc_line_rec.DPAS_RATING                 := :OLD.DPAS_RATING;
+    l_old_okc_line_rec.TEMPLATE_USED               := :OLD.TEMPLATE_USED;
+    l_old_okc_line_rec.PRICE_TYPE                  := :OLD.PRICE_TYPE;
+    l_old_okc_line_rec.CURRENCY_CODE               := :OLD.CURRENCY_CODE;
+    l_old_okc_line_rec.LAST_UPDATE_LOGIN           := :OLD.LAST_UPDATE_LOGIN;
+    l_old_okc_line_rec.DATE_TERMINATED             := :OLD.DATE_TERMINATED;
+    l_old_okc_line_rec.START_DATE                  := :OLD.START_DATE;
+    l_old_okc_line_rec.END_DATE                    := :OLD.END_DATE;
+    l_old_okc_line_rec.ATTRIBUTE_CATEGORY          := :OLD.ATTRIBUTE_CATEGORY;
+    l_old_okc_line_rec.ATTRIBUTE1                  := :OLD.ATTRIBUTE1;
+    l_old_okc_line_rec.ATTRIBUTE2                  := :OLD.ATTRIBUTE2;
+    l_old_okc_line_rec.ATTRIBUTE3                  := :OLD.ATTRIBUTE3;
+    l_old_okc_line_rec.ATTRIBUTE4                  := :OLD.ATTRIBUTE4;
+    l_old_okc_line_rec.ATTRIBUTE5                  := :OLD.ATTRIBUTE5;
+    l_old_okc_line_rec.ATTRIBUTE6                  := :OLD.ATTRIBUTE6;
+    l_old_okc_line_rec.ATTRIBUTE7                  := :OLD.ATTRIBUTE7;
+    l_old_okc_line_rec.ATTRIBUTE8                  := :OLD.ATTRIBUTE8;
+    l_old_okc_line_rec.ATTRIBUTE9                  := :OLD.ATTRIBUTE9;
+    l_old_okc_line_rec.ATTRIBUTE10                 := :OLD.ATTRIBUTE10;
+    l_old_okc_line_rec.ATTRIBUTE11                 := :OLD.ATTRIBUTE11;
+    l_old_okc_line_rec.ATTRIBUTE12                 := :OLD.ATTRIBUTE12;
+    l_old_okc_line_rec.ATTRIBUTE13                 := :OLD.ATTRIBUTE13;
+    l_old_okc_line_rec.ATTRIBUTE14                 := :OLD.ATTRIBUTE14;
+    l_old_okc_line_rec.ATTRIBUTE15                 := :OLD.ATTRIBUTE15;
+    l_old_okc_line_rec.SECURITY_GROUP_ID           := :OLD.SECURITY_GROUP_ID;
+    l_old_okc_line_rec.CLE_ID_RENEWED_TO           := :OLD.CLE_ID_RENEWED_TO;
+    l_old_okc_line_rec.PRICE_NEGOTIATED_RENEWED    := :OLD.PRICE_NEGOTIATED_RENEWED;
+    l_old_okc_line_rec.CURRENCY_CODE_RENEWED       := :OLD.CURRENCY_CODE_RENEWED;
+    l_old_okc_line_rec.UPG_ORIG_SYSTEM_REF         := :OLD.UPG_ORIG_SYSTEM_REF;
+    l_old_okc_line_rec.UPG_ORIG_SYSTEM_REF_ID      := :OLD.UPG_ORIG_SYSTEM_REF_ID;
+    l_old_okc_line_rec.DATE_RENEWED                := :OLD.DATE_RENEWED;
+    l_old_okc_line_rec.ORIG_SYSTEM_SOURCE_CODE     := :OLD.ORIG_SYSTEM_SOURCE_CODE;
+    l_old_okc_line_rec.ORIG_SYSTEM_ID1             := :OLD.ORIG_SYSTEM_ID1;
+    l_old_okc_line_rec.ORIG_SYSTEM_REFERENCE1      := :OLD.ORIG_SYSTEM_REFERENCE1;
+    l_old_okc_line_rec.PROGRAM_APPLICATION_ID      := :OLD.PROGRAM_APPLICATION_ID;
+    l_old_okc_line_rec.PROGRAM_ID                  := :OLD.PROGRAM_ID;
+    l_old_okc_line_rec.PROGRAM_UPDATE_DATE         := :OLD.PROGRAM_UPDATE_DATE;
+    l_old_okc_line_rec.REQUEST_ID                  := :OLD.REQUEST_ID;
+    l_old_okc_line_rec.PRICE_LIST_ID               := :OLD.PRICE_LIST_ID;
+    l_old_okc_line_rec.PRICE_LIST_LINE_ID          := :OLD.PRICE_LIST_LINE_ID;
+    l_old_okc_line_rec.LINE_LIST_PRICE             := :OLD.LINE_LIST_PRICE;
+    l_old_okc_line_rec.ITEM_TO_PRICE_YN            := :OLD.ITEM_TO_PRICE_YN;
+    l_old_okc_line_rec.PRICING_DATE                := :OLD.PRICING_DATE;
+    l_old_okc_line_rec.PRICE_BASIS_YN              := :OLD.PRICE_BASIS_YN;
+    l_old_okc_line_rec.CONFIG_HEADER_ID            := :OLD.CONFIG_HEADER_ID;
+    l_old_okc_line_rec.CONFIG_REVISION_NUMBER      := :OLD.CONFIG_REVISION_NUMBER;
+    l_old_okc_line_rec.CONFIG_COMPLETE_YN          := :OLD.CONFIG_COMPLETE_YN;
+    l_old_okc_line_rec.CONFIG_VALID_YN             := :OLD.CONFIG_VALID_YN;
+    l_old_okc_line_rec.CONFIG_TOP_MODEL_LINE_ID    := :OLD.CONFIG_TOP_MODEL_LINE_ID;
+    l_old_okc_line_rec.CONFIG_ITEM_TYPE            := :OLD.CONFIG_ITEM_TYPE;
+    l_old_okc_line_rec.CONFIG_ITEM_ID              := :OLD.CONFIG_ITEM_ID;
+    l_old_okc_line_rec.SERVICE_ITEM_YN             := :OLD.SERVICE_ITEM_YN;
+    l_old_okc_line_rec.PH_PRICING_TYPE             := :OLD.PH_PRICING_TYPE;
+    l_old_okc_line_rec.PH_PRICE_BREAK_BASIS        := :OLD.PH_PRICE_BREAK_BASIS;
+    l_old_okc_line_rec.PH_MIN_QTY                  := :OLD.PH_MIN_QTY;
+    l_old_okc_line_rec.PH_MIN_AMT                  := :OLD.PH_MIN_AMT;
+    l_old_okc_line_rec.PH_QP_REFERENCE_ID          := :OLD.PH_QP_REFERENCE_ID;
+    l_old_okc_line_rec.PH_VALUE                    := :OLD.PH_VALUE;
+    l_old_okc_line_rec.PH_ENFORCE_PRICE_LIST_YN    := :OLD.PH_ENFORCE_PRICE_LIST_YN;
+    l_old_okc_line_rec.PH_ADJUSTMENT               := :OLD.PH_ADJUSTMENT;
+    l_old_okc_line_rec.PH_INTEGRATED_WITH_QP       := :OLD.PH_INTEGRATED_WITH_QP;
+    l_old_okc_line_rec.CUST_ACCT_ID                := :OLD.CUST_ACCT_ID;
+    l_old_okc_line_rec.BILL_TO_SITE_USE_ID         := :OLD.BILL_TO_SITE_USE_ID;
+    l_old_okc_line_rec.INV_RULE_ID                 := :OLD.INV_RULE_ID;
+    l_old_okc_line_rec.LINE_RENEWAL_TYPE_CODE      := :OLD.LINE_RENEWAL_TYPE_CODE;
+    l_old_okc_line_rec.SHIP_TO_SITE_USE_ID         := :OLD.SHIP_TO_SITE_USE_ID;
+    l_old_okc_line_rec.PAYMENT_TERM_ID             := :OLD.PAYMENT_TERM_ID;
+    l_old_okc_line_rec.DATE_CANCELLED              := :OLD.DATE_CANCELLED;
+    l_old_okc_line_rec.TERM_CANCEL_SOURCE          := :OLD.TERM_CANCEL_SOURCE;
+    l_old_okc_line_rec.PAYMENT_INSTRUCTION_TYPE    := :OLD.PAYMENT_INSTRUCTION_TYPE;
+    l_old_okc_line_rec.ANNUALIZED_FACTOR           := :OLD.ANNUALIZED_FACTOR;
+    l_old_okc_line_rec.CANCELLED_AMOUNT            := :OLD.CANCELLED_AMOUNT;
+
+  END IF;
+  -----------------------------------------------------------
+  -- New Column Values After Update
+  -----------------------------------------------------------
+  IF INSERTING OR UPDATING THEN
+    l_new_okc_line_rec.ID                          := :NEW.ID;
+    l_new_okc_line_rec.LINE_NUMBER                 := :NEW.LINE_NUMBER;
+    l_new_okc_line_rec.CHR_ID                      := :NEW.CHR_ID;
+    l_new_okc_line_rec.CLE_ID                      := :NEW.CLE_ID;
+    l_new_okc_line_rec.CLE_ID_RENEWED              := :NEW.CLE_ID_RENEWED;
+    l_new_okc_line_rec.DNZ_CHR_ID                  := :NEW.DNZ_CHR_ID;
+    l_new_okc_line_rec.DISPLAY_SEQUENCE            := :NEW.DISPLAY_SEQUENCE;
+    l_new_okc_line_rec.STS_CODE                    := :NEW.STS_CODE;
+    l_new_okc_line_rec.TRN_CODE                    := :NEW.TRN_CODE;
+    l_new_okc_line_rec.LSE_ID                      := :NEW.LSE_ID;
+    l_new_okc_line_rec.EXCEPTION_YN                := :NEW.EXCEPTION_YN;
+    l_new_okc_line_rec.OBJECT_VERSION_NUMBER       := :NEW.OBJECT_VERSION_NUMBER;
+    l_new_okc_line_rec.CREATED_BY                  := :NEW.CREATED_BY;
+    l_new_okc_line_rec.CREATION_DATE               := :NEW.CREATION_DATE;
+    l_new_okc_line_rec.LAST_UPDATED_BY             := :NEW.LAST_UPDATED_BY;
+    l_new_okc_line_rec.LAST_UPDATE_DATE            := :NEW.LAST_UPDATE_DATE;
+    l_new_okc_line_rec.HIDDEN_IND                  := :NEW.HIDDEN_IND;
+    l_new_okc_line_rec.PRICE_NEGOTIATED            := :NEW.PRICE_NEGOTIATED;
+    l_new_okc_line_rec.PRICE_LEVEL_IND             := :NEW.PRICE_LEVEL_IND;
+    l_new_okc_line_rec.PRICE_UNIT                  := :NEW.PRICE_UNIT;
+    l_new_okc_line_rec.PRICE_UNIT_PERCENT          := :NEW.PRICE_UNIT_PERCENT;
+    l_new_okc_line_rec.INVOICE_LINE_LEVEL_IND      := :NEW.INVOICE_LINE_LEVEL_IND;
+    l_new_okc_line_rec.DPAS_RATING                 := :NEW.DPAS_RATING;
+    l_new_okc_line_rec.TEMPLATE_USED               := :NEW.TEMPLATE_USED;
+    l_new_okc_line_rec.PRICE_TYPE                  := :NEW.PRICE_TYPE;
+    l_new_okc_line_rec.CURRENCY_CODE               := :NEW.CURRENCY_CODE;
+    l_new_okc_line_rec.LAST_UPDATE_LOGIN           := :NEW.LAST_UPDATE_LOGIN;
+    l_new_okc_line_rec.DATE_TERMINATED             := :NEW.DATE_TERMINATED;
+    l_new_okc_line_rec.START_DATE                  := :NEW.START_DATE;
+    l_new_okc_line_rec.END_DATE                    := :NEW.END_DATE;
+    l_new_okc_line_rec.ATTRIBUTE_CATEGORY          := :NEW.ATTRIBUTE_CATEGORY;
+    l_new_okc_line_rec.ATTRIBUTE1                  := :NEW.ATTRIBUTE1;
+    l_new_okc_line_rec.ATTRIBUTE2                  := :NEW.ATTRIBUTE2;
+    l_new_okc_line_rec.ATTRIBUTE3                  := :NEW.ATTRIBUTE3;
+    l_new_okc_line_rec.ATTRIBUTE4                  := :NEW.ATTRIBUTE4;
+    l_new_okc_line_rec.ATTRIBUTE5                  := :NEW.ATTRIBUTE5;
+    l_new_okc_line_rec.ATTRIBUTE6                  := :NEW.ATTRIBUTE6;
+    l_new_okc_line_rec.ATTRIBUTE7                  := :NEW.ATTRIBUTE7;
+    l_new_okc_line_rec.ATTRIBUTE8                  := :NEW.ATTRIBUTE8;
+    l_new_okc_line_rec.ATTRIBUTE9                  := :NEW.ATTRIBUTE9;
+    l_new_okc_line_rec.ATTRIBUTE10                 := :NEW.ATTRIBUTE10;
+    l_new_okc_line_rec.ATTRIBUTE11                 := :NEW.ATTRIBUTE11;
+    l_new_okc_line_rec.ATTRIBUTE12                 := :NEW.ATTRIBUTE12;
+    l_new_okc_line_rec.ATTRIBUTE13                 := :NEW.ATTRIBUTE13;
+    l_new_okc_line_rec.ATTRIBUTE14                 := :NEW.ATTRIBUTE14;
+    l_new_okc_line_rec.ATTRIBUTE15                 := :NEW.ATTRIBUTE15;
+    l_new_okc_line_rec.SECURITY_GROUP_ID           := :NEW.SECURITY_GROUP_ID;
+    l_new_okc_line_rec.CLE_ID_RENEWED_TO           := :NEW.CLE_ID_RENEWED_TO;
+    l_new_okc_line_rec.PRICE_NEGOTIATED_RENEWED    := :NEW.PRICE_NEGOTIATED_RENEWED;
+    l_new_okc_line_rec.CURRENCY_CODE_RENEWED       := :NEW.CURRENCY_CODE_RENEWED;
+    l_new_okc_line_rec.UPG_ORIG_SYSTEM_REF         := :NEW.UPG_ORIG_SYSTEM_REF;
+    l_new_okc_line_rec.UPG_ORIG_SYSTEM_REF_ID      := :NEW.UPG_ORIG_SYSTEM_REF_ID;
+    l_new_okc_line_rec.DATE_RENEWED                := :NEW.DATE_RENEWED;
+    l_new_okc_line_rec.ORIG_SYSTEM_SOURCE_CODE     := :NEW.ORIG_SYSTEM_SOURCE_CODE;
+    l_new_okc_line_rec.ORIG_SYSTEM_ID1             := :NEW.ORIG_SYSTEM_ID1;
+    l_new_okc_line_rec.ORIG_SYSTEM_REFERENCE1      := :NEW.ORIG_SYSTEM_REFERENCE1;
+    l_new_okc_line_rec.PROGRAM_APPLICATION_ID      := :NEW.PROGRAM_APPLICATION_ID;
+    l_new_okc_line_rec.PROGRAM_ID                  := :NEW.PROGRAM_ID;
+    l_new_okc_line_rec.PROGRAM_UPDATE_DATE         := :NEW.PROGRAM_UPDATE_DATE;
+    l_new_okc_line_rec.REQUEST_ID                  := :NEW.REQUEST_ID;
+    l_new_okc_line_rec.PRICE_LIST_ID               := :NEW.PRICE_LIST_ID;
+    l_new_okc_line_rec.PRICE_LIST_LINE_ID          := :NEW.PRICE_LIST_LINE_ID;
+    l_new_okc_line_rec.LINE_LIST_PRICE             := :NEW.LINE_LIST_PRICE;
+    l_new_okc_line_rec.ITEM_TO_PRICE_YN            := :NEW.ITEM_TO_PRICE_YN;
+    l_new_okc_line_rec.PRICING_DATE                := :NEW.PRICING_DATE;
+    l_new_okc_line_rec.PRICE_BASIS_YN              := :NEW.PRICE_BASIS_YN;
+    l_new_okc_line_rec.CONFIG_HEADER_ID            := :NEW.CONFIG_HEADER_ID;
+    l_new_okc_line_rec.CONFIG_REVISION_NUMBER      := :NEW.CONFIG_REVISION_NUMBER;
+    l_new_okc_line_rec.CONFIG_COMPLETE_YN          := :NEW.CONFIG_COMPLETE_YN;
+    l_new_okc_line_rec.CONFIG_VALID_YN             := :NEW.CONFIG_VALID_YN;
+    l_new_okc_line_rec.CONFIG_TOP_MODEL_LINE_ID    := :NEW.CONFIG_TOP_MODEL_LINE_ID;
+    l_new_okc_line_rec.CONFIG_ITEM_TYPE            := :NEW.CONFIG_ITEM_TYPE;
+    l_new_okc_line_rec.CONFIG_ITEM_ID              := :NEW.CONFIG_ITEM_ID;
+    l_new_okc_line_rec.SERVICE_ITEM_YN             := :NEW.SERVICE_ITEM_YN;
+    l_new_okc_line_rec.PH_PRICING_TYPE             := :NEW.PH_PRICING_TYPE;
+    l_new_okc_line_rec.PH_PRICE_BREAK_BASIS        := :NEW.PH_PRICE_BREAK_BASIS;
+    l_new_okc_line_rec.PH_MIN_QTY                  := :NEW.PH_MIN_QTY;
+    l_new_okc_line_rec.PH_MIN_AMT                  := :NEW.PH_MIN_AMT;
+    l_new_okc_line_rec.PH_QP_REFERENCE_ID          := :NEW.PH_QP_REFERENCE_ID;
+    l_new_okc_line_rec.PH_VALUE                    := :NEW.PH_VALUE;
+    l_new_okc_line_rec.PH_ENFORCE_PRICE_LIST_YN    := :NEW.PH_ENFORCE_PRICE_LIST_YN;
+    l_new_okc_line_rec.PH_ADJUSTMENT               := :NEW.PH_ADJUSTMENT;
+    l_new_okc_line_rec.PH_INTEGRATED_WITH_QP       := :NEW.PH_INTEGRATED_WITH_QP;
+    l_new_okc_line_rec.CUST_ACCT_ID                := :NEW.CUST_ACCT_ID;
+    l_new_okc_line_rec.BILL_TO_SITE_USE_ID         := :NEW.BILL_TO_SITE_USE_ID;
+    l_new_okc_line_rec.INV_RULE_ID                 := :NEW.INV_RULE_ID;
+    l_new_okc_line_rec.LINE_RENEWAL_TYPE_CODE      := :NEW.LINE_RENEWAL_TYPE_CODE;
+    l_new_okc_line_rec.SHIP_TO_SITE_USE_ID         := :NEW.SHIP_TO_SITE_USE_ID;
+    l_new_okc_line_rec.PAYMENT_TERM_ID             := :NEW.PAYMENT_TERM_ID;
+    l_new_okc_line_rec.DATE_CANCELLED              := :NEW.DATE_CANCELLED;
+    l_new_okc_line_rec.TERM_CANCEL_SOURCE          := :NEW.TERM_CANCEL_SOURCE;
+    l_new_okc_line_rec.PAYMENT_INSTRUCTION_TYPE    := :NEW.PAYMENT_INSTRUCTION_TYPE;
+    l_new_okc_line_rec.ANNUALIZED_FACTOR           := :NEW.ANNUALIZED_FACTOR;
+    l_new_okc_line_rec.CANCELLED_AMOUNT            := :NEW.CANCELLED_AMOUNT;
+  END IF;
+
+
+  --Call Trigger Event Processor
+  xxssys_strataforce_events_pkg.okc_line_trg_processor(p_old_okc_line_rec     => l_old_okc_line_rec,
+                                                       p_new_okc_line_rec     => l_new_okc_line_rec,
+                                                       p_trigger_name         => l_trigger_name,
+                                                       p_trigger_action       => l_trigger_action
+                                                      );
+
+Exception
+WHEN OTHERS THEN
+  l_error_message := substrb(sqlerrm,1,500);
+  RAISE_APPLICATION_ERROR(-20999,l_error_message);
+END XXOKC_K_LINES_B_AIU_TRG;
+/
